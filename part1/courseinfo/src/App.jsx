@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 const Header = ({ course }) => {
   return (
     <div>
@@ -31,9 +32,9 @@ const Total = ({ course }) => {
 const Content = ({ course }) => {
   return (
     <div>
-      {course.parts.map((part, index) => (
-        <Part key={index} part={part}></Part>
-      ))}
+      <Part part={course.parts[0]}/>
+      <Part part={course.parts[1]}/>
+      <Part part={course.parts[2]}/>
     </div>
   );
 };
