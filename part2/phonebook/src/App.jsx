@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-import axios from 'axios'
+import personsService from './services/persons'
 
 // Note - handleSearchChange could be moved to filter component.
 const App = () => {
@@ -12,10 +12,10 @@ const App = () => {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personsService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -25,13 +25,19 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
-    } else {
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
-    }
+
+    personsService
+      .create(personObject)
+      .then(returnedPerson => {
+        if (persons.some((person) => person.name === newName)) {
+          alert(`${newName} is already added to phonebook`)
+        } else {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        }
+      })
+    
   }
 
   const handlePersonChange = (event) => {
