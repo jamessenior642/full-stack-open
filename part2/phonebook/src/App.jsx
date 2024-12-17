@@ -20,24 +20,40 @@ const App = () => {
   }, [])
 
   const addPerson = (event) => {
-    event.preventDefault()
+    event.preventDefault();
+    if (persons.some((person) => person.name === newName)) {
+      // if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`))
+      alert(`${newName} is already added to phonebook`)
+      return
+    }
+  
     const personObject = {
       name: newName,
-      number: newNumber
+      number: newNumber,
     }
-
+  
     personsService
       .create(personObject)
       .then(returnedPerson => {
-        if (persons.some((person) => person.name === newName)) {
-          alert(`${newName} is already added to phonebook`)
-        } else {
-          setPersons(persons.concat(returnedPerson))
-          setNewName('')
-          setNewNumber('')
-        }
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
       })
-    
+  }
+  
+
+  const handleDeletePerson = (id) => {
+    if (window.confirm("Are you sure you want to delete this person?")) {
+      personsService
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id));
+        })
+        .catch(error => {
+          alert('Error: Could not delete the person. They may have already been removed from the server.');
+          console.error(error);
+        });
+    }
   }
 
   const handlePersonChange = (event) => {
@@ -63,7 +79,7 @@ const App = () => {
       <PersonForm addPerson={addPerson}
        newName={newName} newNumber={newNumber} handleNumberChange={handleNumberChange} handlePersonChange={handlePersonChange} />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} />
+      <Persons personsToShow={personsToShow} deleteHandler={handleDeletePerson} />
     </div>
   )
 }
