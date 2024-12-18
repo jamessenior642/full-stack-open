@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
@@ -13,6 +14,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
   const [message, setMessage] = useState(null)
+  const [success, setSuccess] = useState(false)
 
   useEffect(() => {
     personsService
@@ -35,11 +37,22 @@ const App = () => {
           setMessage(
             `Updated ${newName}'s info`
           )
+          setSuccess(true)
           setTimeout(() => {
             setMessage(null)
+            setSuccess(false)
           }, 5000)
           setNewName('')
           setNewNumber('')
+        })
+        .catch(error => {
+          setMessage(
+            `Information of '${person.name}' has already been removed from server`
+          )
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+          setPersons(persons.filter(p => p.id !== person.id))
         })
       }
       // alert(`${newName} is already added to phonebook`)
@@ -58,8 +71,10 @@ const App = () => {
           setMessage(
             `Added ${newName}`
           )
+          setSuccess(true)
           setTimeout(() => {
             setMessage(null)
+            setSuccess(false)
           }, 5000)
           setNewName('')
           setNewNumber('')
@@ -100,7 +115,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message}/>
+      <Notification message={message} success={success}/>
       <Filter search={search} handleSearchChange={handleSearchChange} />
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson}
