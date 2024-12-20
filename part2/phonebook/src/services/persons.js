@@ -1,5 +1,7 @@
 import axios from 'axios'
-const baseUrl = 'http://localhost:3003/api/persons'
+// const localUrl = 'http://localhost:3003/api/persons'
+const remoteUrl = 'https://fso-server.onrender.com/api/persons'
+const baseUrl = remoteUrl
 
 const getAll = () => {
     const request = axios.get(baseUrl)
